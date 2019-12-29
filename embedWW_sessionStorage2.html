@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>password_entry_form</title>
+	<meta name="generator" content="BBEdit 12.6" />
+
+<script language="javascript">
+<!--//
+/*This Script allows people to enter by using a form that asks for a
+UserID and Password*/
+
+function pasuser(form) {
+	var courseID = form.courseID.value;
+	var userID = form.userID.value;
+	var course_password = form.course_password.value;
+	// do login with remote site
+	// store user name, course, password and session key in sessionStorage
+	sessionStorage.setItem("userID",userID);
+	sessionStorage.setItem("course_password", course_password);
+	sessionStorage.setItem("courseID", courseID);
+	console.log("courseID: " + sessionStorage.getItem("courseID") + " userID: " 
+		 +sessionStorage.getItem("userID") + " course_password: " 
+		 + sessionStorage.getItem("course_password"));
+}
+//-->
+</script>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+
+<script>
+	$(document).ready(function(){
+		$( ".clickme" ).click(function() {
+		  $( this).next().slideToggle( "slow", function() {
+			// Animation complete.
+		  });
+		});
+
+	   // jQuery methods go here...
+	});
+</script>
+<style>
+	.clickme {background-color: #ccccFF ;}
+	iframe {
+		margin-left: 20px;
+		padding-left: 10px;
+	}
+</style>
+<script>
+	var path = "https://demo.webwork.rochester.edu"; 
+	var json_input = {
+		"answersSubmitted" : "0",
+		"sourceFilePath" : "Library/Union/setIntFTC/sc5_4_13.pg",
+		"problemSeed" : "123567",
+		"courseID" : "daemon_course",
+		"userID" : "daemon",
+		"course_password" : "daemon!",
+		"showSummary" : "1",
+		"displayMode" : "MathJax",
+		"problemIdentifierPrefix" : "102",
+		"language" : "en",
+		"outputformat" : "standard",
+	};
+	function insertWebworkIframe(options, 
+		path="https://demo.webwork.rochester.edu", 
+		width="800",
+		height="400"){
+		var str = `<iframe width = "${width}" height = "${height}" src="${path}/webwork2/html2xml?`;
+		console.log("courseID: " + sessionStorage.getItem("courseID") + " userID: " 
+		     +sessionStorage.getItem("userID") + " course_password: " 
+		     + sessionStorage.getItem("course_password"));
+
+	    options["courseID"]=sessionStorage.getItem("courseID");
+	    options["userID"]=sessionStorage.getItem("userID");
+	    options["course_password"]=sessionStorage.getItem("course_password");
+	
+		for (var key in options ){
+			str += ("&" + key + "=" + options[key]);
+		}
+		str +='"></iframe><br/>';
+		return (str); 
+		//src="http://demo.webwork.rochester.edu/webwork2/html2xml?&answersSubmitted=0&sourceFilePath=Library/Union/setIntFTC/sc5_4_13.pg&problemSeed=123567&courseID=daemon_course&userID=daemon&course_password=daemon&showSummary=1&displayMode=MathJax&problemIdentifierPrefix=102&language=en&outputformat=sticky"></iframe><br/>');
+	};
+</script>
+
+<script type="text/javascript">
+	$(document).ready(function(){
+	 $("#button1").click(function(){
+		 $("#div1").html( insertWebworkIframe(json_input) );
+	   })
+	});
+</script>
+
+<script type="text/javascript">
+	$(document).ready(function(){
+	 $("#button2").click(function(){
+		 $("#div2").html( insertWebworkIframe({
+			"answersSubmitted" : "0",
+			"sourceFilePath" : "Library/Union/setSeriesTaylor/ur_sr_9_6.pg",
+			"problemSeed" : "123567",
+//			"courseID" : "daemon_course",
+//			"userID" : "daemon",
+//			"course_password" : "daemon!",	
+			"showSummary" : "1",
+			"displayMode" : "MathJax",
+			"problemIdentifierPrefix" : "102",
+			"language" : "en",
+			"outputformat" : "sticky",
+		}) );
+	   })
+	});
+</script>
+
+
+</head>
+<body>
+<center>
+<!--login form -->
+<div class="clickme">
+  Click here to hide/            show login
+</div>
+<form name="login">
+<table bgcolor="white" cellpadding="12" border="1">
+<tr><td colspan="2"><center><h1><i><b>Login</b></i></h1></center></td></tr>
+
+<tr><td><h1><i><b>Course:</b></i></h1></td><td><input name="courseID" type="text"></td></tr>
+
+<tr><td><h1><i><b>UserID:</b></i></h1></td><td><input name="userID" type="text"></td></tr>
+
+<tr><td><h1><i><b>Password:</b></i></h1></td><td><input name="course_password" type="password"></td></tr>
+
+<tr>
+	<td><center><input type="button" value="Login"onClick="pasuser(this.form)"></center></td>
+    <td><center><br><input type="Reset"></td>
+</tr>
+
+</table>
+</form>
+</center> 
+
+<!-- end login form -->
+</head>
+<body>
+
+<button id="button1">Get WeBWorK Problem</button>
+<div id="div1"><h2>Let jQuery AJAX Change This Text</h2></div>
+
+<button id="button2">Get WeBWorK Problem</button>
+<div id="div2"><h2>Let jQuery AJAX Change This Text</h2></div>
+
+
+
+</body>
+</html>
