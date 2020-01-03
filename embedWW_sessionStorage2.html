@@ -25,7 +25,7 @@ function pasuser(form) {
 }
 //-->
 </script>
-
+<script src="https://webwork-ptx.aimath.org/webwork2_files/js/vendor/iframe-resizer/js/iframeResizer.min.js"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 
 <script>
@@ -40,10 +40,17 @@ function pasuser(form) {
 	});
 </script>
 <style>
-	.clickme {background-color: #ccccFF ;}
+	.clickme {background-color: #ccccccc ;}
 	iframe {
 		margin-left: 20px;
+		margin-right: 20px;
+		margin-top: 20px;
+		margin-bottom: 20px;
 		padding-left: 10px;
+		padding-right: 10px;
+		padding-bottom: 10px;
+		padding-top: 10px;
+		border-color: black;
 	}
 </style>
 <script>
@@ -61,7 +68,7 @@ function pasuser(form) {
 		"language" : "en",
 		"outputformat" : "standard",
 	};
-	function insertWebworkIframe(options, 
+	function insertWebworkWebserviceIframe(options, 
 		path="https://demo.webwork.rochester.edu", 
 		width="800",
 		height="400"){
@@ -82,11 +89,45 @@ function pasuser(form) {
 		//src="http://demo.webwork.rochester.edu/webwork2/html2xml?&answersSubmitted=0&sourceFilePath=Library/Union/setIntFTC/sc5_4_13.pg&problemSeed=123567&courseID=daemon_course&userID=daemon&course_password=daemon&showSummary=1&displayMode=MathJax&problemIdentifierPrefix=102&language=en&outputformat=sticky"></iframe><br/>');
 	};
 </script>
+<script>
+var		iframe_resize_string = '<script>';
+		iframe_resize_string += 'iFrameResize({log:true,inPageLinks:true,resizeFrom:"child",checkOrigin:["https://demo.webwork.rochester.edu"]})';
+		iframe_resize_string += '';
+</script>
+<script>
+	function insertWebworkIframe(options, 
+		site_url="https://demo.webwork.rochester.edu",
+		courseID="2017_UR_WW_workshop", 
+		width="100%")
+		{
+	    options["userID"]=sessionStorage.getItem("userID");
+	    options["course_password"]=sessionStorage.getItem("course_password");
+		var iframe_string = `<iframe width = "${width}"  src="${site_url}/webwork2/`;
+		iframe_string+=courseID +'/';
+		iframe_string+=options["homeworkSetID"]+'/';
+		iframe_string+=options["problemNumber"]+'/';
+		iframe_string+="?";
+		iframe_string+='effectiveUser='+options["userID"]+'&user='+options["userID"];
+		iframe_string+='&passwd='+options["course_password"];
+			
+		for (var key in options ){
+			if ( key=='homeworkSetId'|| key=='problemNumber' || key=='userID'||key=='course_password'){
+				//skip these 
+			} else {
+				iframe_string += ("&" + key + "=" + options[key]);
+			}
+		}
+		iframe_string +='"></iframe><br/>';		
+		console.log(iframe_string.split('&'));
+		return (iframe_string+iframe_resize_string); 
+	
+	};
+</script>
 
 <script type="text/javascript">
 	$(document).ready(function(){
 	 $("#button1").click(function(){
-		 $("#div1").html( insertWebworkIframe(json_input) );
+		 $("#div1").html( insertWebworkWebserviceIframe(json_input) );
 	   })
 	});
 </script>
@@ -94,7 +135,7 @@ function pasuser(form) {
 <script type="text/javascript">
 	$(document).ready(function(){
 	 $("#button2").click(function(){
-		 $("#div2").html( insertWebworkIframe({
+		 $("#div2").html( insertWebworkWebserviceIframe({
 			"answersSubmitted" : "0",
 			"sourceFilePath" : "Library/Union/setSeriesTaylor/ur_sr_9_6.pg",
 			"problemSeed" : "123567",
@@ -105,13 +146,49 @@ function pasuser(form) {
 			"displayMode" : "MathJax",
 			"problemIdentifierPrefix" : "102",
 			"language" : "en",
-			"outputformat" : "sticky",
+			"outputformat" : "sticky"
+		}) 
+	   )
+	 });
+	});
+</script>
+
+<script type="text/javascript">
+	$(document).ready(function(){
+	 $("button.webwork-iframe").click(function(){
+		 $(this).next("div").html( insertWebworkIframe({
+			"answersSubmitted" : "0",
+			"courseID" : "2017_UR_WW_workshop",
+			"homeworkSetID" : $(this).attr("setID"),
+			"problemNumber" : $(this).attr("probNum"),
+			"showSummary" : "1",
+			"displayMode" : "MathJax",
+			"problemIdentifierPrefix" : "102",
+			"language" : "en",
+			"templateName" : "simple",
 		}) );
 	   })
 	});
 </script>
-
-
+<!-- 
+<script type="text/javascript">
+	$(document).ready(function(){
+	 $("#button4").click(function(){
+		 $("#div4").html( insertWebworkIframe({
+			"answersSubmitted" : "0",
+			"courseID" : "2017_UR_WW_workshop",
+			"homeworkSetID" : "Demo",
+			"problemNumber" : "4",
+			"showSummary" : "1",
+			"displayMode" : "MathJax",
+			"problemIdentifierPrefix" : "102",
+			"language" : "en",
+			"templateName" : "simple",
+		}) );
+	   })
+	});
+ -->
+</script>
 </head>
 <body>
 <center>
@@ -121,17 +198,17 @@ function pasuser(form) {
 </div>
 <form name="login">
 <table bgcolor="white" cellpadding="12" border="1">
-<tr><td colspan="2"><center><h1><i><b>Login</b></i></h1></center></td></tr>
+<tr><td colspan="6"><center><h3><i><b>Login</b></i></h3></center></td></tr>
 
-<tr><td><h1><i><b>Course:</b></i></h1></td><td><input name="courseID" type="text"></td></tr>
+<tr><td><h4><i><b>Course:</b></i></h4></td><td><input name="courseID" type="text"></td>
 
-<tr><td><h1><i><b>UserID:</b></i></h1></td><td><input name="userID" type="text"></td></tr>
+<td><h4><i><b>UserID:</b></i></h4></td><td><input name="userID" type="text"></td>
 
-<tr><td><h1><i><b>Password:</b></i></h1></td><td><input name="course_password" type="password"></td></tr>
+<td><h4><i><b>Password:</b></i></h4></td><td><input name="course_password" type="password"></td>
 
 <tr>
 	<td><center><input type="button" value="Login"onClick="pasuser(this.form)"></center></td>
-    <td><center><br><input type="Reset"></td>
+    <td><center><input type="Reset"></td>
 </tr>
 
 </table>
@@ -148,7 +225,17 @@ function pasuser(form) {
 <button id="button2">Get WeBWorK Problem</button>
 <div id="div2"><h2>Let jQuery AJAX Change This Text</h2></div>
 
+<h1>Summative examples</h1>
 
+<ol>
+<li><button id="button3" class="webwork-iframe" setID="Demo" probNum="6">CAPA physics problem</button>
+<div></div>
+</li>
+
+<li>
+<button id="button4" class="webwork-iframe" setID="Demo" probNum="2">graph limit problem</button>
+<div></div>
+</li>
 
 </body>
 </html>

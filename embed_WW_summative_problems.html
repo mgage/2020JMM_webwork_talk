@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>embedding WW summative problems</title>
+	<meta name="generator" content="BBEdit 12.6" />
+<script>
+	// some global constants
+	var SITE_URL = "https://demo.webwork.rochester.edu";
+	var COURSE_ID = "UR102";
+</script>
+<script language="javascript">
+
+/*This Script allows people to enter by using a form that asks for a
+UserID and Password*/
+
+function store_user_password(form) {
+	var userID = form.userID.value;
+	var course_password = form.course_password.value;
+	// do login with remote site
+	// store user name, course, password and session key in sessionStorage
+	sessionStorage.setItem("userID",userID);
+	sessionStorage.setItem("course_password", course_password);
+	console.log( " userID: " 
+		 +sessionStorage.getItem("userID") + " course_password: " 
+		 + sessionStorage.getItem("course_password"));
+};
+
+function erase_user_password() {
+	sessionStorage.setItem("userID",'');
+	sessionStorage.setItem("course_password",'');
+};
+</script>
+
+<!--  scripts of jquery and for resizing the iframe -->
+
+<script src="https://demo.webwork.rochester.edu/webwork2_files/js/vendor/iframe-resizer/js/iframeResizer.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script>
+var		iframe_resize_string = '<script>';
+		iframe_resize_string += 'iFrameResize({log:true,inPageLinks:true,resizeFrom:"child",checkOrigin:["https://demo.webwork.rochester.edu"]})';
+		iframe_resize_string += '';
+</script>
+
+<!--  script for knowl-like object -->
+<script>
+	$(document).ready(function(){
+		$( ".clickme" ).click(function() {
+		  $( this).next().slideToggle( "slow", function() {
+			// Animation complete.
+		  });
+		});
+
+	   // jQuery methods go here...
+	});
+</script>
+
+<!--  iframe style -->
+<style>
+	.clickme {background-color: #ccccFF;}
+	iframe {
+		margin-left: 20px;
+		margin-right: 20px;
+		margin-top: 20px;
+		margin-bottom: 20px;
+		padding-left: 10px;
+		padding-right: 10px;
+		padding-bottom: 10px;
+		padding-top: 10px;
+		border-color: black;
+	}
+</style>
+
+
+
+<script>
+	function insertWebworkIframe(options, 
+		site_url="https://demo.webwork.rochester.edu",
+		courseID=COURSE_ID, 
+		width="100%")
+		{
+	    options["userID"]=sessionStorage.getItem("userID");
+	    options["course_password"]=sessionStorage.getItem("course_password");
+		var iframe_string = `<iframe width = "${width}"  src="${site_url}/webwork2/`;
+		iframe_string+=courseID +'/';
+		iframe_string+=options["homeworkSetID"]+'/';
+		iframe_string+=options["problemNumber"]+'/';
+		iframe_string+="?";
+		iframe_string+='effectiveUser='+options["userID"]+'&user='+options["userID"];
+		iframe_string+='&passwd='+options["course_password"];
+			
+		for (var key in options ){
+			if ( key=='homeworkSetId'|| key=='problemNumber' || key=='userID'||key=='course_password'){
+				//skip these 
+			} else {
+				iframe_string += ("&" + key + "=" + options[key]);
+			}
+		}
+		iframe_string +='"></iframe><br/>';		
+		console.log(iframe_string.split('&'));
+		return (iframe_string+iframe_resize_string); 
+	
+	};
+</script>
+
+<!-- 
+<script type="text/javascript">
+	$(document).ready(function(){
+	 $("#button1").click(function(){
+		 $("#div1").html( insertWebworkWebserviceIframe(json_input) );
+	   })
+	});
+</script>
+ -->
+
+<!-- // action for webwork-iframe button -->
+
+<script type="text/javascript">
+	$(document).ready(function(){
+	 $("button.webwork-iframe").click(function(){
+		 $(this).next("div").html( insertWebworkIframe({
+			"answersSubmitted" : "0",
+			"courseID" : 	COURSE_ID,
+			"homeworkSetID" : $(this).attr("setID"),
+			"problemNumber" : $(this).attr("probNum"),
+			"showSummary" : "1",
+			"displayMode" : "MathJax",
+			"problemIdentifierPrefix" : "102",
+			"language" : "en",
+			"templateName" : "simple",
+		}) );
+	   })
+	});
+</script>
+</head>
+<body>
+
+<center>
+
+<h2>
+<script>document.write("Webwork site: " + SITE_URL)</script>
+<br/>
+<script> document.write( "Course: " + COURSE_ID ) </script>
+</h2>
+
+
+<!--login form -->
+<div class="clickme">
+  Click here to hide/            show login
+</div>
+<form name="login">
+<table bgcolor="white" cellpadding="12" border="1">
+<tr><td colspan="6"><center><h3><i><b>Login</b></i></h3></center></td></tr>
+
+<td><h4><i><b>UserID:</b></i></h4></td><td><input name="userID" type="text"></td>
+
+<td><h4><i><b>Password:</b></i></h4></td><td><input name="course_password" type="password"></td>
+
+<tr>
+	<td><center><input type="button" value="Login"onClick="store_user_password(this.form)"></center></td>
+    <td><center><input type="Reset" onClick="erase_user_password()"></td>
+</tr>
+
+</table>
+</form>
+</center> 
+
+<!-- end login form -->
+</head>
+<body>
+
+<center>
+<h1>Summative examples</h1>
+
+<ol style="center">
+<li>
+<div class="clickme"> 
+	Show/hide: CAPA physics problem
+</div>
+<div class="wwproblem">
+	<button id="button3" class="webwork-iframe" setID="Demo" probNum="6">do problem</button>
+	<div></div>
+</div>
+
+</li>
+
+<li><div class="clickme"> 
+	Show/hide: graph limit problem
+</div>
+<div class="wwproblem">
+	<button id="button4" class="webwork-iframe" setID="Demo" probNum="2">do problem</button>
+	<div></div>
+</div>
+</li>
+</center>
+</body>
+</html>
