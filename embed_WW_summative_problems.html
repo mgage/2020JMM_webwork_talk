@@ -4,44 +4,69 @@
 	<meta charset="utf-8" />
 	<title>embedding WW summative problems</title>
 	<meta name="generator" content="BBEdit 12.6" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/4.2.9/iframeResizer.min.js"></script>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+
+<!-- define SITE_URL and COURSE_ID -->
 <script>
 	// some global constants
 	var SITE_URL = "https://demo.webwork.rochester.edu";
 	var COURSE_ID = "UR102";
 </script>
+<!-- login script -->
 <script language="javascript">
-
 /*This Script allows people to enter by using a form that asks for a
 UserID and Password*/
 
-function store_user_password(form) {
-	var userID = form.userID.value;
-	var course_password = form.course_password.value;
-	// do login with remote site
-	// store user name, course, password and session key in sessionStorage
-	sessionStorage.setItem("userID",userID);
-	sessionStorage.setItem("course_password", course_password);
-	console.log( " userID: " 
-		 +sessionStorage.getItem("userID") + " course_password: " 
-		 + sessionStorage.getItem("course_password"));
-};
+// do login with remote site
+// store user name, course, password and session key in sessionStorage
 
-function erase_user_password() {
+
+	function store_user_password(form) {
+		var userID = form.userID.value;
+		var course_password = form.course_password.value;	
+		console.log("logging in " + userID);// why doesn't this print to console??
+
+	
+		sessionStorage.setItem("userID",userID);
+		sessionStorage.setItem("course_password", course_password);
+		alert ("logged in as " + sessionStorage.getItem("userID") );
+		$("#user-login").html(userID);
+		console.log("userID " + userID);
+	};
+
+function erase_user_password(form) {
 	sessionStorage.setItem("userID",'');
 	sessionStorage.setItem("course_password",'');
+		console.log( " userID: " 
+		 +sessionStorage.getItem("userID") + " course_password: " 
+		 + sessionStorage.getItem("course_password"));	
+
+	alert ("logged out. stored userID is \"" +sessionStorage.getItem("userID")+' " '
+	       + "\n -- close window to erase webwork authorization cookie");
 };
 </script>
 
-<!--  scripts of jquery and for resizing the iframe -->
 
-<script src="https://demo.webwork.rochester.edu/webwork2_files/js/vendor/iframe-resizer/js/iframeResizer.min.js"></script>
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 <script>
+//iframe_resize_string = '';
 var		iframe_resize_string = '<script>';
 		iframe_resize_string += 'iFrameResize({log:true,inPageLinks:true,resizeFrom:"child",checkOrigin:["https://demo.webwork.rochester.edu"]})';
 		iframe_resize_string += '';
-</script>
 
+
+	$(document).ready(function(){
+	 $("#webwork-site").html(SITE_URL);
+	 $("#webwork-course").html(COURSE_ID);
+	 var userID = sessionStorage.getItem("userID");
+	 var loginMessage = "Not logged in ";
+	 if (userID !== null){
+	 	loginMessage = "logged in as " + sessionStorage.getItem("userID")
+	 }
+	 $("#user-login").html(loginMessage);
+	 });
+</script>
 <!--  script for knowl-like object -->
 <script>
 	$(document).ready(function(){
@@ -68,6 +93,26 @@ var		iframe_resize_string = '<script>';
 		padding-bottom: 10px;
 		padding-top: 10px;
 		border-color: black;
+	}
+	.login-button {
+	  padding: 15px 25px;
+	  font-size: 24px;
+	  text-align: center;
+	  cursor: pointer;
+	  outline: none;
+	  color: #fff;
+	  background-color: #4CAF50;
+	  border: none;
+	  border-radius: 15px;
+	  box-shadow: 0 9px #999;
+	}
+
+	.login-button:hover {background-color: #3e8e41}
+
+	.login-button:active {
+	  background-color: #3e8e41;
+	  box-shadow: 0 5px #666;
+	  transform: translateY(4px);
 	}
 </style>
 
@@ -98,31 +143,24 @@ var		iframe_resize_string = '<script>';
 		}
 		iframe_string +='"></iframe><br/>';		
 		console.log(iframe_string.split('&'));
-		return (iframe_string+iframe_resize_string); 
+		return (iframe_string + iframe_resize_string); 
 	
 	};
 </script>
 
-<!-- 
+
+<!-- // initialize set title and attach webwork-iframe to button -->
+
+ 
 <script type="text/javascript">
 	$(document).ready(function(){
-	 $("#button1").click(function(){
-		 $("#div1").html( insertWebworkWebserviceIframe(json_input) );
-	   })
-	});
-</script>
- -->
-
-<!-- // action for webwork-iframe button -->
-
-<script type="text/javascript">
-	$(document).ready(function(){
+ 
 	 $("button.webwork-iframe").click(function(){
 		 $(this).next("div").html( insertWebworkIframe({
 			"answersSubmitted" : "0",
 			"courseID" : 	COURSE_ID,
-			"homeworkSetID" : $(this).attr("setID"),
-			"problemNumber" : $(this).attr("probNum"),
+			"homeworkSetID" : $(this).attr("data-set_id"),
+			"problemNumber" : $(this).attr("data-problem_number"),
 			"showSummary" : "1",
 			"displayMode" : "MathJax",
 			"problemIdentifierPrefix" : "102",
@@ -132,17 +170,6 @@ var		iframe_resize_string = '<script>';
 	   })
 	});
 </script>
-</head>
-<body>
-
-<center>
-
-<h2>
-<script>document.write("Webwork site: " + SITE_URL)</script>
-<br/>
-<script> document.write( "Course: " + COURSE_ID ) </script>
-</h2>
-
 
 <!--login form -->
 <div class="clickme">
@@ -150,15 +177,17 @@ var		iframe_resize_string = '<script>';
 </div>
 <form name="login">
 <table bgcolor="white" cellpadding="12" border="1">
-<tr><td colspan="6"><center><h3><i><b>Login</b></i></h3></center></td></tr>
+<tr><td colspan="6"><h3><i><b>Login</b></i></h3></td></tr>
 
 <td><h4><i><b>UserID:</b></i></h4></td><td><input name="userID" type="text"></td>
 
 <td><h4><i><b>Password:</b></i></h4></td><td><input name="course_password" type="password"></td>
 
 <tr>
-	<td><center><input type="button" value="Login"onClick="store_user_password(this.form)"></center></td>
-    <td><center><input type="Reset" onClick="erase_user_password()"></td>
+	<td></td>
+	<td><button class="login-button" onclick="store_user_password(this.form)">Login</button></td>
+    <td><button class="login-button" onclick="erase_user_password(this.form)">Reset</button></td>
+    <td></td>
 </tr>
 
 </table>
@@ -170,28 +199,49 @@ var		iframe_resize_string = '<script>';
 <body>
 
 <center>
+
+<h2 id="webwork-site"></h2>
+<h2 id="webwork-course"></h2>
+
+<h2> Summative questions -- grades are recorded </h2>
+
+<h3 id="user-login"> Not logged in </h3>
+
+
+
+
+<center>
 <h1>Summative examples</h1>
 
-<ol style="center">
+<ol>
 <li>
 <div class="clickme"> 
-	Show/hide: CAPA physics problem
+	Show/hide: CAPA physics problem 6
 </div>
 <div class="wwproblem">
-	<button id="button3" class="webwork-iframe" setID="Demo" probNum="6">do problem</button>
+	<button  class="webwork-iframe" data-set_id="Demo" data-problem_number="6">do problem</button>
 	<div></div>
 </div>
 
 </li>
 
 <li><div class="clickme"> 
-	Show/hide: graph limit problem
+	Show/hide: graph limit problem 2
 </div>
 <div class="wwproblem">
-	<button id="button4" class="webwork-iframe" setID="Demo" probNum="2">do problem</button>
+	<button  class="webwork-iframe" data-set_id="Demo" data-problem_number="2">do problem</button>
 	<div></div>
 </div>
 </li>
+
+<li><div class="clickme"> 
+	Show/hide: palindrome problem 10
+</div>
+<div class="wwproblem">
+	<button  class="webwork-iframe" data-set_id="Demo" data-problem_number="10">do problem</button>
+	<div></div>
+</div>
+</ol>
 </center>
 </body>
 </html>

@@ -4,7 +4,7 @@ Contains work toward a javascript app that inserts a webwork problem into an htm
 The idea is to allow more flexibility in inserting iframe/webwork sections into an html page and to provide
 some protection for passwords which will be kept in localStorage and not in the html file.
 
-This is also supposed to eventually interface with Learnosity clients. 
+Modulo a few minor tweaks in presentation this technique works with any webwork site using webwork 2.13 or later in other words  any site updated within the last two years. 
 
 
 
@@ -36,7 +36,7 @@ This is also supposed to eventually interface with Learnosity clients.
   * The **site**, **courseName**, **homeworkSetName**, and **problemNumber** must be specified in the text calling the homework problem.
   * The problem seed is NOT needed and is provided by the course on the server when the student is assigned the problem.  
 
-* Standard options: choose templateName=simple, 
+* Standard options: choose templateName=simple, (default is "system")
 
 * Advantages and risks.  
 
