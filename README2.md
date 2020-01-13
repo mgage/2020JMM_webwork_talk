@@ -1,12 +1,3 @@
-<<<<<<< HEAD
-# ww-standalone-js
-Contains work toward a javascript app that inserts a webwork problem into an html page.
-
-The idea is to allow more flexibility in inserting iframe/webwork sections into an html page and to provide
-some protection for passwords which will be kept in localStorage and not in the html file.
-
-Modulo a few minor tweaks in presentation this technique works with any webwork site using webwork 2.13 or later in other words  any site updated within the last two years. 
-
 
 
 # "summative" embedded problems.  
@@ -78,16 +69,13 @@ Modulo a few minor tweaks in presentation this technique works with any webwork 
 
 * defined in `renderViaXMLRPC.pm`
 * url access: `https://mySite/webwork2/html2xml?`
-* userID (often daemon)
+* userID (often daemon - must have permission login_ta or higher)
 * courseID (often daemon_course)
 * displayMode (MathJax or images)
 * course_password (for userID in this course -- often 'daemon')
-* answersSubmitted (0 or 1)
+* answersSubmitted (0 or 1-- usually 0 for initial request)
 * problemSeed
 * problemUUID (aka 'problemIdentifierPrefix';  'problemUUID' is preferred )
 * sourceFilePath
 * outputformat
-=======
-# 2020JMM_webwork_talk
-materials for talk given at the 2020 January meeting JMM in Denver
->>>>>>> Initial commit
+
